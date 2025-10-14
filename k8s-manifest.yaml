@@ -1,0 +1,112 @@
+---
+# ConfigMap per le variabili d'ambiente
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: website2markdown-config
+  namespace: default
+data:
+  PORT: "3004"
+
+---
+# Secret per l'API key
+apiVersion: v1
+kind: Secret
+metadata:
+  name: website2markdown-secret
+  namespace: default
+type: Opaque
+data:
+  # API key codificata in base64: nb_api_2024_7f8e9d1c2b3a4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+  X_API_KEY: bmJfYXBpXzIwMjRfN2Y4ZTlkMWMyYjNhNGU1ZjZnN2g4aTlqMGsxbDJtM240bzVwNnE3cjhzOXQwdTF2MnczeDR5NXo=
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website2markdown
+  namespace: default
+  labels:
+    app: website2markdown
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: website2markdown
+  template:
+    metadata:
+      labels:
+        app: website2markdown
+    spec:
+      containers:
+      - name: website2markdown
+        image: website2markdown:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: website2markdown-config
+              key: PORT
+        - name: X_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: website2markdown-secret
+              key: X_API_KEY
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1001
+
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: website2markdown-service
+  namespace: default
+  labels:
+    app: website2markdown
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3004
+    protocol: TCP
+    name: http
+  selector:
+    app: website2markdown
