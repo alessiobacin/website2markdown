@@ -47,26 +47,37 @@ npm run dev
 
 La CLI `w2m` è inclusa nel package e si installa globalmente.
 
+#### One-liner (tutte le piattaforme)
+
+```bash
+npm install -g github:alessiobacin/website2markdown
+```
+
+Questo comando funziona su **Mac, Linux e Windows** (in PowerShell usa lo stesso comando). Scarica, compila e installa `w2m` globalmente. Se hai accesso in lettura al repository (pubblico o privato con npm autenticato a GitHub), sei a posto.
+
+#### One-liner con token (repo privato)
+
+Se npm non è autenticato a GitHub, passa il token direttamente via GitHub API:
+
+```bash
+curl -sSL -H "Authorization: token <GITHUB_TOKEN>" \
+  -H "Accept: application/vnd.github.raw" \
+  https://api.github.com/repos/alessiobacin/website2markdown/contents/scripts/install.sh | bash
+```
+
+Sostituisci `<GITHUB_TOKEN>` con un tuo [Personal Access Token](https://github.com/settings/tokens) con permesso `repo` (o `contents: read` per fine-grained token).
+
 #### Uso diretto (nessuna installazione)
 
 ```bash
 npx github:alessiobacin/website2markdown w2m --help
 ```
 
-Il comando `npx` scarica ed esegue il package al volo, senza installazione permanente. Se vuoi installare `w2m` come comando globale, scegli il metodo per la tua piattaforma.
+Il comando `npx` scarica ed esegue il package al volo, senza installazione permanente.
 
-#### Mac / Linux (bash)
+#### Installazione manuale
 
 ```bash
-# Opzione 1: via npm (funziona anche con repo privati se hai npm autenticato)
-npm install -g github:alessiobacin/website2markdown
-
-# Opzione 2: script di installazione locale
-git clone git@github.com:alessiobacin/website2markdown.git
-cd website2markdown
-bash scripts/install.sh
-
-# Opzione 3: installazione manuale
 git clone git@github.com:alessiobacin/website2markdown.git
 cd website2markdown
 npm install
@@ -74,51 +85,21 @@ npm run build
 npm link              # → w2m disponibile globalmente
 ```
 
-#### Windows (PowerShell)
+Su Windows (PowerShell), lo stesso procedimento funziona sostituendo l'ultimo passo con:
 
 ```powershell
-# Opzione 1: via npm (funziona anche con repo privati)
-npm install -g github:alessiobacin/website2markdown
-
-# Opzione 2: script di installazione locale
-git clone git@github.com:alessiobacin/website2markdown.git
-cd website2markdown
-.\scripts\install.ps1
-
-# Opzione 3: installazione manuale
-git clone git@github.com:alessiobacin/website2markdown.git
 cd website2markdown
 npm install
 npm run build
-npm link              # → w2m disponibile globalmente
+npm link
 ```
 
-#### Repository privato
+In alternativa, esegui lo script dedicato per la tua piattaforma:
 
-Se non hai accesso pubblico al repository, imposta un GitHub Personal Access Token:
-
-**Mac / Linux:**
-```bash
-# Clona il repo (con token), poi esegui lo script localmente
-git clone https://oauth2:ghp_xxxxxxxxxxxx@github.com/alessiobacin/website2markdown.git
-cd website2markdown
-GITHUB_TOKEN=ghp_xxxxxxxxxxxx bash scripts/install.sh
-```
-
-**Windows (PowerShell):**
-```powershell
-# Clona il repo, poi esegui lo script
-git clone https://oauth2:ghp_xxxxxxxxxxxx@github.com/alessiobacin/website2markdown.git
-cd website2markdown
-$env:GITHUB_TOKEN = 'ghp_xxxxxxxxxxxx'
-.\scripts\install.ps1
-```
-
-In alternativa, installa direttamente con npm (gestisce automaticamente l'autenticazione GitHub):
-
-```bash
-npm install -g github:alessiobacin/website2markdown
-```
+| Piattaforma | Script |
+|-------------|--------|
+| Mac / Linux | `bash scripts/install.sh` |
+| Windows     | `.\scripts\install.ps1` |
 
 ## API
 
