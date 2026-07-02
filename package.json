@@ -7,8 +7,8 @@
     "w2m": "./dist/cli/index.js"
   },
   "scripts": {
-    "build": "tsc",
-    "prepare": "tsc",
+    "build": "tsc && chmod +x dist/cli/index.js",
+    "prepare": "tsc && chmod +x dist/cli/index.js",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "watch": "nodemon --exec ts-node src/index.ts"

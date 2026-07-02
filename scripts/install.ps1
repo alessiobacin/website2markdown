@@ -99,6 +99,7 @@ try {
 
     Write-Step "Compila TypeScript"
     npx tsc 2>$null
+    & chmod +x "$InstallDir/dist/cli/index.js" 2>$null
     Write-Ok
 
     Write-Step "Collega comando w2m"

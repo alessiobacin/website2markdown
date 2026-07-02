@@ -57,6 +57,7 @@ ok
 
 step "Compila TypeScript"
 npx tsc 2>/dev/null
+chmod +x dist/cli/index.js
 ok
 
 # ── link globale ──────────────────────────────────────────────────────
