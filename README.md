@@ -323,6 +323,14 @@ Health check rapido del server.
 w2m health
 ```
 
+### w2m update
+
+Aggiorna w2m all'ultima versione da GitHub. Rileva automaticamente se è installato via git (`~/.w2m`) o npm globale e aggiorna di conseguenza.
+
+```bash
+w2m update
+```
+
 ### Esempi combinati
 
 ```bash

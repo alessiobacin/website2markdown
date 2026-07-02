@@ -6,6 +6,7 @@ import * as path from 'path';
 import { ApiClient, SinglePageResult } from './client';
 import { writeFile } from 'fs/promises';
 import { loadConfig, saveConfig, CliConfig } from './config';
+import { execSync } from 'child_process';
 
 dotenv.config();
 
@@ -191,6 +192,66 @@ program
     } catch (error: unknown) {
       console.error(`\n  ✖ ${client.formatError(error)}\n`);
       process.exit(1);
+    }
+  });
+
+program
+  .command('update')
+  .description('Aggiorna w2m all\'ultima versione da GitHub')
+  .action(async () => {
+    const packageRoot = path.resolve(__dirname, '..', '..');
+    const pkgJson = path.join(packageRoot, 'package.json');
+    const gitDir = path.join(packageRoot, '.git');
+
+    if (!fs.existsSync(pkgJson)) {
+      console.error('\n  ✖ Installazione non trovata.\n');
+      process.exit(1);
+    }
+
+    // Leggi versione corrente
+    const pkg = JSON.parse(fs.readFileSync(pkgJson, 'utf-8'));
+    console.log(`\n  Versione installata: ${pkg.version}\n`);
+
+    if (fs.existsSync(gitDir)) {
+      // Installazione da git → pull + rebuild
+      console.log('  Controllo aggiornamenti...\n');
+
+      try {
+        execSync('git fetch origin main', { cwd: packageRoot, stdio: 'pipe' });
+        const behind = execSync('git rev-list --count HEAD..origin/main', { cwd: packageRoot, stdio: 'pipe' })
+          .toString().trim();
+
+        if (behind === '0') {
+          console.log('  ✔ Già all\'ultima versione.\n');
+          return;
+        }
+
+        console.log(`  Nuovi commit: ${behind}\n`);
+
+        execSync('git pull --ff-only origin main', { cwd: packageRoot, stdio: 'inherit' });
+        console.log('  Installa dipendenze...');
+        execSync('npm install --silent', { cwd: packageRoot, stdio: 'inherit' });
+        console.log('  Compila...');
+        execSync('npm run build', { cwd: packageRoot, stdio: 'inherit' });
+
+        console.log(`\n  ✔ w2m aggiornato alla versione ${pkg.version}.\n`);
+      } catch (err) {
+        console.error('\n  ✖ Aggiornamento fallito.');
+        console.error('    Riprova manualmente: cd ~/.w2m && git pull && npm install && npm run build\n');
+        process.exit(1);
+      }
+    } else {
+      // Installazione npm globale → reinstall
+      console.log('  Reinstallazione da GitHub...\n');
+
+      try {
+        execSync('npm install -g github:alessiobacin/website2markdown', { stdio: 'inherit' });
+        console.log(`\n  ✔ w2m aggiornato.\n`);
+      } catch {
+        console.error('\n  ✖ Reinstallazione fallita.');
+        console.error('    Riprova: npm install -g github:alessiobacin/website2markdown\n');
+        process.exit(1);
+      }
     }
   });
 
