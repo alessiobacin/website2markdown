@@ -232,14 +232,26 @@ Health check (non richiede autenticazione).
 
 ### Configurazione
 
-La CLI legge le credenziali da variabili d'ambiente o parametri espliciti:
+La CLI cerca le credenziali in questo ordine: flag CLI > variabili d'ambiente > file di configurazione.
+
+**Configurazione persistente (salvata in `~/.w2m/config.json`):**
 
 ```bash
-# Variabili d'ambiente (comode per uso frequente)
+w2m configure --api-url https://w2m.otomatik.it --api-key la-tua-chiave
+```
+
+Basta una volta, i comandi successivi non richiedono più flag.
+
+**Variabili d'ambiente (alternativa):**
+
+```bash
 export W2M_API_URL=http://localhost:3004
 export W2M_API_KEY=la-tua-chiave
+```
 
-# Oppure --api-key / --api-url su ogni comando
+**Flag espliciti (sovrascrivono tutto):**
+
+```bash
 w2m status --api-url http://localhost:3004 --api-key la-tua-chiave
 ```
 

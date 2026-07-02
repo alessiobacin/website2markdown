@@ -5,20 +5,30 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ApiClient, SinglePageResult } from './client';
 import { writeFile } from 'fs/promises';
+import { loadConfig, saveConfig, CliConfig } from './config';
 
 dotenv.config();
 
-const DEFAULT_API_URL = process.env.W2M_API_URL || 'http://localhost:3004';
-const API_KEY = process.env.W2M_API_KEY || process.env.X_API_KEY || '';
+const configFile = loadConfig();
+
+function resolveApiUrl(flagUrl?: string): string {
+  return flagUrl || process.env.W2M_API_URL || configFile.apiUrl || 'http://localhost:3004';
+}
+
+function resolveApiKey(flagKey?: string): string {
+  return flagKey || process.env.W2M_API_KEY || process.env.X_API_KEY || configFile.apiKey || '';
+}
 
 function createClient(apiUrl?: string, apiKey?: string): ApiClient {
-  const url = apiUrl || DEFAULT_API_URL;
-  const key = apiKey || API_KEY;
+  const url = resolveApiUrl(apiUrl);
+  const key = resolveApiKey(apiKey);
 
   if (!key) {
     console.error('\n  ✖ Nessuna API key configurata.');
-    console.error('    Imposta W2M_API_KEY o X_API_KEY come variabile d\'ambiente,');
-    console.error('    o usa --api-key <chiave>.\n');
+    console.error('    Opzioni:');
+    console.error('      1. w2m configure --api-url <url> --api-key <chiave>');
+    console.error('      2. export W2M_API_KEY=<chiave>');
+    console.error('      3. --api-key <chiave> su ogni comando\n');
     process.exit(1);
   }
 
@@ -33,6 +43,27 @@ program
   .version('1.0.0')
   .option('-u, --api-url <url>', 'URL base del server API')
   .option('-k, --api-key <key>', 'API key per autenticazione');
+
+program
+  .command('configure')
+  .description('Salva URL e API key in ~/.w2m/config.json (persistenti)')
+  .option('-u, --api-url <url>', 'URL base del server API')
+  .option('-k, --api-key <key>', 'API key per autenticazione')
+  .action(async (options: { apiUrl?: string; apiKey?: string }) => {
+    const url = options.apiUrl || program.opts().apiUrl;
+    const key = options.apiKey || program.opts().apiKey;
+
+    if (!url || !key) {
+      console.error('\n  ✖ Devi specificare --api-url e --api-key.\n');
+      console.error('    w2m configure --api-url https://example.com --api-key la-tua-chiave\n');
+      process.exit(1);
+    }
+
+    saveConfig({ apiUrl: url, apiKey: key });
+    console.log(`\n  ✔ Configurazione salvata in ~/.w2m/config.json\n`);
+    console.log(`    URL:  ${url}`);
+    console.log(`    Key:  ${key.slice(0, 8)}...\n`);
+  });
 
 program
   .command('convert')
