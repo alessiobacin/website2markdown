@@ -13,13 +13,29 @@ Il server API deve essere in esecuzione. Di default il CLI punta a `http://local
 
 ## Configurazione
 
-La configurazione si passa via flag del comando o variabili d'ambiente:
+La configurazione si passa via flag del comando, variabili d'ambiente o file di configurazione persistente. L'ordine di priorità è:
+
+1. Flag CLI (`--api-url`, `--api-key`) — sovrascrive tutto
+2. Variabili d'ambiente (`W2M_API_URL`, `W2M_API_KEY` / `X_API_KEY`)
+3. File di configurazione (`~/.w2m/config.json`)
+4. Default: `http://localhost:3004`
+
+### Configurazione persistente
 
 ```bash
-# Flag
-w2m status --api-url http://localhost:3004 --api-key la-chiave
+# Salva URL e API key in ~/.w2m/config.json (una volta sola)
+w2m configure --api-url http://localhost:3004 --api-key la-chiave
+```
 
-# Oppure variabili d'ambiente
+### Flag espliciti
+
+```bash
+w2m status --api-url http://localhost:3004 --api-key la-chiave
+```
+
+### Variabili d'ambiente
+
+```bash
 export W2M_API_URL=http://localhost:3004
 export W2M_API_KEY=la-chiave
 ```
@@ -42,6 +58,14 @@ Health check rapido del server.
 
 ```bash
 w2m health
+```
+
+### w2m configure
+
+Salva URL e API key in `~/.w2m/config.json` in modo persistente. Basta eseguirlo una volta, i comandi successivi leggono automaticamente la configurazione.
+
+```bash
+w2m configure --api-url http://localhost:3004 --api-key la-tua-chiave
 ```
 
 ### w2m single <url>
@@ -91,7 +115,21 @@ w2m robots https://example.com
 w2m robots https://example.com --output robots.txt
 ```
 
+### w2m update
+
+Aggiorna w2m all'ultima versione da GitHub. Rileva automaticamente se è installato via git (`~/.w2m`) o npm globale e aggiorna di conseguenza.
+
+```bash
+w2m update
+```
+
 ## Workflow tipici
+
+### 0. Configurazione iniziale (prima volta)
+
+```bash
+w2m configure --api-url https://w2m.otomatik.it --api-key la-tua-chiave
+```
 
 ### 1. Verifica connessione e converti una pagina
 

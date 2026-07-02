@@ -184,6 +184,7 @@ Stato del servizio e lista degli endpoint disponibili.
   "endpoints": {
     "convert": "POST /api/convert",
     "single": "POST /api/convert/single",
+    "robots-txt": "GET /api/robots-txt?url=<sito>",
     "status": "GET /api/convert/status"
   }
 }

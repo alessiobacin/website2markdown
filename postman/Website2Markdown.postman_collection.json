@@ -1,735 +1,789 @@
 {
-	"info": {
-		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-		"name": "Website to Markdown API",
-		"description": "Collection per testare l'API di conversione da sito web a markdown. Include tutti gli endpoint disponibili: conversione multipla (/api/convert), conversione singola pagina (/api/convert/single), e status (/api/convert/status). Contiene esempi di richieste e test automatici per tutti gli scenari.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "12345678"
-	},
-	"item": [
-		{
-			"name": "Health Check",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has status OK\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(\"OK\");",
-							"});",
-							"",
-							"pm.test(\"Response has timestamp\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.timestamp).to.exist;",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/health",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"health"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "API Status",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Service is active\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(\"active\");",
-							"});",
-							"",
-							"pm.test(\"Has endpoints information\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.endpoints).to.exist;",
-							"    pm.expect(jsonData.endpoints.convert).to.exist;",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/api/convert/status",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert",
-						"status"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Convert Website - Example.com",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has success true\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.success).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Response has domain\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.domain).to.exist;",
-							"});",
-							"",
-							"pm.test(\"Response has pages array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.pages).to.be.an('array');",
-							"    pm.expect(jsonData.totalPages).to.equal(jsonData.pages.length);",
-							"});",
-							"",
-							"pm.test(\"Each page has required fields\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    if (jsonData.pages.length > 0) {",
-							"        var page = jsonData.pages[0];",
-							"        pm.expect(page.url).to.exist;",
-							"        pm.expect(page.title).to.exist;",
-							"        pm.expect(page.markdown).to.exist;",
-							"        pm.expect(page.wordCount).to.be.a('number');",
-							"    }",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"example.com\",\n  \"maxPages\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Convert Website - Custom URL",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has success true\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.success).to.be.true;",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"https://httpbin.org\",\n  \"maxPages\": 3\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Missing API Key",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {",
-							"    pm.response.to.have.status(401);",
-							"});",
-							"",
-							"pm.test(\"Error message about missing API key\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"x-api-key\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"example.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Invalid API Key",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 403\", function () {",
-							"    pm.response.to.have.status(403);",
-							"});",
-							"",
-							"pm.test(\"Error message about invalid API key\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"Invalid\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "invalid-key-123",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"example.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Missing URL",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
-							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Error message about missing URL\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"URL\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"maxPages\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Invalid URL Format",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
-							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Error message about invalid URL\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"Invalid\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"not-a-valid-url\",\n  \"maxPages\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Convert Single Page - HACCP",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has success true\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.success).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Response has required fields\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.url).to.exist;",
-							"    pm.expect(jsonData.title).to.exist;",
-							"    pm.expect(jsonData.markdown).to.exist;",
-							"    pm.expect(jsonData.wordCount).to.be.a('number');",
-							"    pm.expect(jsonData.timestamp).to.exist;",
-							"});",
-							"",
-							"pm.test(\"Markdown content is not empty\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.markdown.length).to.be.above(0);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"https://www.newbiz.it/haccp/\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert/single",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert",
-						"single"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Convert Single Page - Custom URL",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has success true\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.success).to.be.true;",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"https://example.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert/single",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert",
-						"single"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Single Page Invalid URL",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
-							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Error message about invalid URL\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"Invalid\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"not-a-valid-url\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert/single",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert",
-						"single"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Error - Too Many Pages",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
-							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Error message about maxPages limit\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.error).to.include(\"maxPages\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-api-key",
-						"value": "{{api_key}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"url\": \"example.com\",\n  \"maxPages\": 1000\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/api/convert",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"convert"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					"// Pre-request script per logging",
-					"console.log('Executing request:', pm.info.requestName);",
-					"console.log('Request URL:', pm.request.url.toString());"
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					"// Global test script",
-					"pm.test('Response time is less than 30 seconds', function () {",
-					"    pm.expect(pm.response.responseTime).to.be.below(30000);",
-					"});",
-					"",
-					"pm.test('Response has valid JSON', function () {",
-					"    pm.response.to.be.json;",
-					"});"
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "https://w2m.otomatik.it",
-			"type": "string"
-		},
-		{
-			"key": "api_key",
-			"value": "nb_api_2024_7f8e9d1c2b3a4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Website to Markdown API",
+    "description": "Collection per testare l'API di conversione da sito web a markdown. Include tutti gli endpoint disponibili: conversione multipla (/api/convert), conversione singola pagina (/api/convert/single), status (/api/convert/status), e robots.txt (/api/robots-txt). Contiene esempi di richieste e test automatici per tutti gli scenari.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345678"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has status OK\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"OK\");",
+              "});",
+              "",
+              "pm.test(\"Response has timestamp\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.timestamp).to.exist;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "API Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Service is active\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"active\");",
+              "});",
+              "",
+              "pm.test(\"Has endpoints information\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.endpoints).to.exist;",
+              "    pm.expect(jsonData.endpoints.convert).to.exist;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/convert/status",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Convert Website - Example.com",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has domain\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.domain).to.exist;",
+              "});",
+              "",
+              "pm.test(\"Response has pages array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.pages).to.be.an('array');",
+              "    pm.expect(jsonData.totalPages).to.equal(jsonData.pages.length);",
+              "});",
+              "",
+              "pm.test(\"Each page has required fields\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    if (jsonData.pages.length > 0) {",
+              "        var page = jsonData.pages[0];",
+              "        pm.expect(page.url).to.exist;",
+              "        pm.expect(page.title).to.exist;",
+              "        pm.expect(page.markdown).to.exist;",
+              "        pm.expect(page.wordCount).to.be.a('number');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"example.com\",\n  \"maxPages\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Convert Website - Custom URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://httpbin.org\",\n  \"maxPages\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Missing API Key",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"Error message about missing API key\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"x-api-key\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"example.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Invalid API Key",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 403\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "",
+              "pm.test(\"Error message about invalid API key\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"Invalid\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "invalid-key-123",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"example.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Missing URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Error message about missing URL\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"URL\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"maxPages\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Invalid URL Format",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Error message about invalid URL\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"Invalid\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"not-a-valid-url\",\n  \"maxPages\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Convert Single Page - HACCP",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has required fields\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.url).to.exist;",
+              "    pm.expect(jsonData.title).to.exist;",
+              "    pm.expect(jsonData.markdown).to.exist;",
+              "    pm.expect(jsonData.wordCount).to.be.a('number');",
+              "    pm.expect(jsonData.timestamp).to.exist;",
+              "});",
+              "",
+              "pm.test(\"Markdown content is not empty\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.markdown.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://www.newbiz.it/haccp/\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert/single",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            "single"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Convert Single Page - Custom URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert/single",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            "single"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Single Page Invalid URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Error message about invalid URL\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"Invalid\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"not-a-valid-url\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert/single",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            "single"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error - Too Many Pages",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Error message about maxPages limit\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.error).to.include(\"maxPages\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"example.com\",\n  \"maxPages\": 1000\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Robots.txt",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has content and sourceUrl\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.content).to.exist;",
+              "    pm.expect(jsonData.sourceUrl).to.exist;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/robots-txt?url={{test_url_1}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "robots-txt"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "{{test_url_1}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script per logging",
+          "console.log('Executing request:', pm.info.requestName);",
+          "console.log('Request URL:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test('Response time is less than 30 seconds', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "pm.test('Response has valid JSON', function () {",
+          "    pm.response.to.be.json;",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://w2m.otomatik.it",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "nb_api_2024_7f8e9d1c2b3a4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z",
+      "type": "string"
+    }
+  ]
 }
