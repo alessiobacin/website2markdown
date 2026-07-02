@@ -1,0 +1,23 @@
+{
+  "skill_name": "w2m-cli",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "potresti convertire questa pagina in markdown? https://example.com/about",
+      "expected_output": "Il CLI w2m viene usato per convertire la singola pagina, con w2m single e flag --output per salvarla su file.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "devo salvare tutta la documentazione di https://docs.example.com come file markdown in una cartella docs/",
+      "expected_output": "Il CLI w2m viene usato con w2m convert e --output ./docs, eventualmente con --max-pages per limitare il numero di pagine.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "che cosa blocca il robots.txt di github.com?",
+      "expected_output": "Il CLI w2m robots github.com viene usato per scaricare e mostrare il contenuto del robots.txt.",
+      "files": []
+    }
+  ]
+}

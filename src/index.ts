@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { websiteToMarkdownRouter } from './routes/websiteToMarkdown';
+import { robotsTxtRouter } from './routes/robotsTxt';
 import { authMiddleware } from './middleware/auth';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -10,7 +11,8 @@ import { errorHandler } from './middleware/errorHandler';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3004;
+const PORT: number = Number(process.env.PORT) || 3004;
+const HOST: string = process.env.HOST || '0.0.0.0';
 
 // Middleware di sicurezza
 app.use(helmet());
@@ -23,6 +25,7 @@ app.use('/api', authMiddleware);
 
 // Routes
 app.use('/api/convert', websiteToMarkdownRouter);
+app.use('/api/robots-txt', authMiddleware, robotsTxtRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -37,9 +40,9 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api/convert`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server running on ${HOST}:${PORT}`);
+  console.log(`📚 API Documentation: http://${HOST}:${PORT}/api/convert`);
 });
 
 export default app;

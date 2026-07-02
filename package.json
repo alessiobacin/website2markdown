@@ -1,8 +1,11 @@
 {
   "name": "website2markdown",
   "version": "1.0.0",
-  "description": "API service to convert websites to markdown by discovering all pages through sitemap/robots.txt",
+  "description": "API service + CLI to convert websites to markdown by discovering all pages through sitemap/robots.txt",
   "main": "dist/index.js",
+  "bin": {
+    "w2m": "./dist/cli/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
@@ -19,23 +22,24 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.0",
-    "cheerio": "^1.0.0-rc.12",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "turndown": "^7.1.2",
-    "xml2js": "^0.6.2"
-  },
-  "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.8.0",
     "@types/turndown": "^5.0.5",
     "@types/xml2js": "^0.4.14",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "commander": "^12.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "turndown": "^7.1.2",
+    "typescript": "^5.2.2",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
     "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.1"
   }
 }

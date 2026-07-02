@@ -64,4 +64,21 @@ export class RobotsParser {
       return false;
     }
   }
+
+  /**
+   * Recupera il contenuto RAW del file robots.txt di un sito
+   */
+  async fetchRawRobotsTxt(baseUrl: string): Promise<{ content: string; sourceUrl: string }> {
+    const domain = extractDomain(baseUrl);
+    const sourceUrl = `https://${domain}/robots.txt`;
+
+    const response = await axios.get(sourceUrl, {
+      timeout: this.timeout,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; WebsiteToMarkdown/1.0)',
+      },
+    });
+
+    return { content: response.data, sourceUrl };
+  }
 }

@@ -97,6 +97,7 @@ router.get('/status', (req: Request, res: Response) => {
     endpoints: {
       convert: 'POST /api/convert',
       single: 'POST /api/convert/single',
+      'robots-txt': 'GET /api/robots-txt?url=<sito>',
       status: 'GET /api/convert/status'
     }
   });
