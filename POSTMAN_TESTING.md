@@ -5,7 +5,8 @@ Questa guida spiega come utilizzare la collection Postman per testare l'API Webs
 ## File Inclusi
 
 - `Website2Markdown.postman_collection.json` - Collection principale con tutti i test
-- `Website2Markdown.postman_environment.json` - Environment con variabili predefinite
+- `Website2Markdown.postman_environment.json` - Environment LOCAL con variabili predefinite
+- `Website2Markdown.postman_environment.prod.json` - Environment PROD con dominio pubblico
 
 ## Importazione in Postman
 
@@ -15,30 +16,33 @@ Questa guida spiega come utilizzare la collection Postman per testare l'API Webs
 3. Seleziona il file `Website2Markdown.postman_collection.json`
 4. Clicca "Import"
 
-### 2. Importa l'Environment
+### 2. Importa gli Environments
 1. Clicca sull'icona dell'ingranaggio in alto a destra (Manage Environments)
 2. Clicca "Import"
-3. Seleziona il file `Website2Markdown.postman_environment.json`
-4. Clicca "Import"
-5. Seleziona l'environment "Website2Markdown Local" dal dropdown
+3. Seleziona il file `Website2Markdown.postman_environment.json` (LOCAL)
+4. Seleziona il file `Website2Markdown.postman_environment.prod.json` (PROD)
+5. Per test in locale, seleziona l'environment "Website2Markdown Local"
+6. Per test in produzione, seleziona l'environment "Website2Markdown PROD"
 
 ## Configurazione
 
 ### Variabili Environment
-Prima di eseguire i test, configura le seguenti variabili nell'environment:
+Prima di eseguire i test, configura le seguenti variabili nell'environment appropriato:
 
-- `base_url`: URL base del server (default: `http://localhost:3000`)
-- `api_key`: La tua API key (default: `your-secret-api-key-here`)
+- `base_url`: URL base del server
+  - LOCAL: `http://localhost:3004`
+  - PROD: `https://w2m.otomatik.it`
+- `api_key`: La tua API key (impostala secondo l'ambiente)
 - `test_url_1`: URL di test 1 (default: `example.com`)
 - `test_url_2`: URL di test 2 (default: `https://httpbin.org`)
 - `max_pages_default`: Numero default di pagine (default: `5`)
 - `max_pages_limit`: Limite massimo pagine (default: `50`)
 
 ### Configurazione API Key
-**IMPORTANTE**: Modifica la variabile `api_key` con la chiave API corretta definita nel tuo file `.env`:
+**IMPORTANTE**: Imposta `api_key` correttamente in base all'ambiente:
 
-1. Vai in "Environments" → "Website2Markdown Local"
-2. Modifica il valore di `api_key` con il valore di `API_KEY` dal tuo file `.env`
+1. Vai in "Environments" → scegli LOCAL o PROD
+2. Imposta `api_key` con la chiave corretta (ad es. dal tuo `.env` per LOCAL, o quella di produzione per PROD)
 3. Salva le modifiche
 
 ## Test Disponibili
@@ -122,10 +126,10 @@ Ogni richiesta include test automatici per:
 ### Server non raggiungibile
 - Verifica che il server sia avviato (`npm run dev`)
 - Controlla che `base_url` sia corretto
-- Verifica che la porta 3000 sia libera
+- Per LOCAL verifica che la porta 3004 sia libera
 
 ### Errori di autenticazione
-- Verifica che `api_key` corrisponda al valore in `.env`
+- Verifica che `api_key` corrisponda al valore dell'ambiente scelto
 - Controlla che l'header `x-api-key` sia presente
 
 ### Test falliti
