@@ -13,6 +13,49 @@ warn()  { printf "${RED}✖${NC} %s\n" "$1"; }
 step()  { printf "${BOLD}%s${NC} %s" "$1" "... "; }
 ok()    { printf "${GREEN}✓${NC}\n"; }
 
+# ── parse arguments ────────────────────────────────────────────────────
+GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --token)
+      if [[ -n "${2:-}" ]]; then
+        GITHUB_TOKEN="$2"
+        shift 2
+      else
+        warn "Missing value for --token"
+        exit 1
+      fi
+      ;;
+    --install-dir)
+      if [[ -n "${2:-}" ]]; then
+        INSTALL_DIR="$2"
+        shift 2
+      else
+        warn "Missing value for --install-dir"
+        exit 1
+      fi
+      ;;
+    --help)
+      echo "Usage: install.sh [--token <github_token>] [--install-dir <path>]"
+      echo ""
+      echo "Installa w2m (website2markdown) globalmente."
+      echo ""
+      echo "Opzioni:"
+      echo "  --token <token>       GitHub personal access token per repo privato"
+      echo "  --install-dir <path>  Directory di installazione (default: ~/.w2m)"
+      echo ""
+      echo "Variabili d'ambiente:"
+      echo "  GITHUB_TOKEN          Token GitHub (alternativa a --token)"
+      exit 0
+      ;;
+    *)
+      warn "Opzione sconosciuta: $1. Usa --help per vedere le opzioni."
+      exit 1
+      ;;
+  esac
+done
+
 # ── prerequisiti ──────────────────────────────────────────────────────
 step "Node.js"
 if ! command -v node &>/dev/null; then
@@ -33,39 +76,65 @@ if ! command -v npm &>/dev/null; then
 fi
 ok
 
-# ── download ──────────────────────────────────────────────────────────
-step "Scarica ${REPO}"
-rm -rf "$INSTALL_DIR"
-mkdir -p "$INSTALL_DIR"
+# ── download & install ────────────────────────────────────────────────
 
-if command -v git &>/dev/null; then
-  git clone --depth 1 --branch "$BRANCH" "https://github.com/${REPO}.git" "$INSTALL_DIR" 2>/dev/null
+# Strategy 1: GITHUB_TOKEN present → git clone with token auth
+if [ -n "$GITHUB_TOKEN" ]; then
+  step "Clona con token GitHub"
+  if ! command -v git &>/dev/null; then
+    warn "git non trovato. Necessario per clonare con token."
+    exit 1
+  fi
+  rm -rf "$INSTALL_DIR"
+  mkdir -p "$(dirname "$INSTALL_DIR")"
+  git clone --depth 1 --branch "$BRANCH" "https://oauth2:${GITHUB_TOKEN}@github.com/${REPO}.git" "$INSTALL_DIR" 2>/dev/null
+  ok
+
+  step "Installa dipendenze"
+  cd "$INSTALL_DIR"
+  npm install --silent 2>/dev/null
+  ok
+
+  step "Compila TypeScript"
+  npx tsc 2>/dev/null
+  ok
+
+  step "Collega comando w2m"
+  npm link --silent 2>/dev/null
+  ok
+
+# Strategy 2: gh CLI disponibile → gh repo clone
+elif command -v gh &>/dev/null; then
+  step "Clona con gh CLI"
+  TMP_DIR=$(mktemp -d)
+  gh repo clone "$REPO" "$TMP_DIR" -- --depth 1 --branch "$BRANCH" 2>/dev/null
+  rm -rf "$INSTALL_DIR"
+  mkdir -p "$(dirname "$INSTALL_DIR")"
+  mv "$TMP_DIR" "$INSTALL_DIR"
+  ok
+
+  step "Installa dipendenze"
+  cd "$INSTALL_DIR"
+  npm install --silent 2>/dev/null
+  ok
+
+  step "Compila TypeScript"
+  npx tsc 2>/dev/null
+  ok
+
+  step "Collega comando w2m"
+  npm link --silent 2>/dev/null
+  ok
+
+# Strategy 3: Fallback → npm install -g direttamente da GitHub
 else
-  # fallback: download zip
-  TMPZIP=$(mktemp)
-  curl -sSL "https://github.com/${REPO}/archive/refs/heads/${BRANCH}.zip" -o "$TMPZIP"
-  unzip -q "$TMPZIP" -d "$INSTALL_DIR"
-  mv "$INSTALL_DIR"/*/* "$INSTALL_DIR"/
-  rm -f "$TMPZIP"
+  step "Installa via npm da GitHub"
+  npm install -g "github:${REPO}" --silent 2>/dev/null
+  ok
 fi
-ok
-
-# ── build ─────────────────────────────────────────────────────────────
-step "Installa dipendenze"
-cd "$INSTALL_DIR"
-npm install --silent 2>/dev/null
-ok
-
-step "Compila TypeScript"
-npx tsc 2>/dev/null
-ok
-
-# ── link globale ──────────────────────────────────────────────────────
-step "Collega comando w2m"
-npm link --silent 2>/dev/null
-ok
 
 # ── done ──────────────────────────────────────────────────────────────
+INSTALL_PATH="${INSTALL_DIR:-$(npm root -g)/website2markdown}"
 cat <<EOF
 
 ${GREEN}┌─────────────────────────────────────────────────────────┐${NC}
@@ -83,6 +152,17 @@ ${GREEN}└───────────────────────
     export W2M_API_URL=http://localhost:3004
     export W2M_API_KEY=la-tua-chiave
 
-${DIM}  Installato in: ${INSTALL_DIR}${NC}
-${DIM}  Per rimuovere: npm uninstall -g website2markdown && rm -rf ${INSTALL_DIR}${NC}
+${DIM}  Per rimuovere: npm uninstall -g website2markdown${NC}
+
+  Attenzione: se il repository e' privato, questo script deve essere eseguito
+  localmente (dopo aver clonato il repo). Le opzioni sono:
+
+    1. Clona con token:  git clone https://<token>@github.com/alessiobacin/website2markdown.git
+       poi:              cd website2markdown && bash scripts/install.sh
+
+    2. Installa diretto: GITHUB_TOKEN=<token> bash scripts/install.sh
+
+    3. Via npm:          npm install -g github:alessiobacin/website2markdown
+
+    4. Via npx:          npx github:alessiobacin/website2markdown w2m --help
 EOF
