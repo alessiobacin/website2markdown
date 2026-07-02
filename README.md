@@ -47,25 +47,21 @@ npm run dev
 
 La CLI `w2m` è inclusa nel package e si installa globalmente.
 
-#### One-liner (tutte le piattaforme)
+#### One-liner (da GitHub)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/alessiobacin/website2markdown/main/scripts/install.sh | bash
+```
+
+**Mac / Linux / Windows (WSL):** scarica, compila e installa `w2m` automaticamente.
+
+#### One-liner via npm
 
 ```bash
 npm install -g github:alessiobacin/website2markdown
 ```
 
-Questo comando funziona su **Mac, Linux e Windows** (in PowerShell usa lo stesso comando). Scarica, compila e installa `w2m` globalmente. Se hai accesso in lettura al repository (pubblico o privato con npm autenticato a GitHub), sei a posto.
-
-#### One-liner con token (repo privato)
-
-Se npm non è autenticato a GitHub, passa il token direttamente via GitHub API:
-
-```bash
-curl -sSL -H "Authorization: token <GITHUB_TOKEN>" \
-  -H "Accept: application/vnd.github.raw" \
-  https://api.github.com/repos/alessiobacin/website2markdown/contents/scripts/install.sh | bash
-```
-
-Sostituisci `<GITHUB_TOKEN>` con un tuo [Personal Access Token](https://github.com/settings/tokens) con permesso `repo` (o `contents: read` per fine-grained token).
+Funziona su **Mac, Linux e Windows PowerShell**. Il package è pubblico su GitHub.
 
 #### Uso diretto (nessuna installazione)
 
@@ -73,28 +69,17 @@ Sostituisci `<GITHUB_TOKEN>` con un tuo [Personal Access Token](https://github.c
 npx github:alessiobacin/website2markdown w2m --help
 ```
 
-Il comando `npx` scarica ed esegue il package al volo, senza installazione permanente.
-
 #### Installazione manuale
 
 ```bash
-git clone git@github.com:alessiobacin/website2markdown.git
+git clone https://github.com/alessiobacin/website2markdown.git
 cd website2markdown
 npm install
 npm run build
 npm link              # → w2m disponibile globalmente
 ```
 
-Su Windows (PowerShell), lo stesso procedimento funziona sostituendo l'ultimo passo con:
-
-```powershell
-cd website2markdown
-npm install
-npm run build
-npm link
-```
-
-In alternativa, esegui lo script dedicato per la tua piattaforma:
+Per Windows PowerShell, gli stessi comandi funzionano identici. In alternativa, esegui lo script dedicato:
 
 | Piattaforma | Script |
 |-------------|--------|
