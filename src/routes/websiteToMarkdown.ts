@@ -97,6 +97,14 @@ router.get('/status', (req: Request, res: Response) => {
     endpoints: {
       convert: 'POST /api/convert',
       single: 'POST /api/convert/single',
+      'batch-single': 'POST /api/convert/batch-single',
+      discover: 'POST /api/discover',
+      extract: 'POST /api/extract',
+      diff: 'POST /api/diff',
+      search: 'POST /api/search',
+      chunk: 'POST /api/chunk',
+      'map-topics': 'POST /api/map-topics',
+      sitemap: 'GET /api/sitemap?url=<sito>',
       'robots-txt': 'GET /api/robots-txt?url=<sito>',
       status: 'GET /api/convert/status'
     }

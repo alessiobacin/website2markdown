@@ -63,10 +63,18 @@
               "    pm.expect(jsonData.status).to.eql(\"active\");",
               "});",
               "",
-              "pm.test(\"Has endpoints information\", function () {",
+              "pm.test(\"Has all endpoints\", function () {",
               "    var jsonData = pm.response.json();",
               "    pm.expect(jsonData.endpoints).to.exist;",
               "    pm.expect(jsonData.endpoints.convert).to.exist;",
+              "    pm.expect(jsonData.endpoints.single).to.exist;",
+              "    pm.expect(jsonData.endpoints.discover).to.exist;",
+              "    pm.expect(jsonData.endpoints.extract).to.exist;",
+              "    pm.expect(jsonData.endpoints.diff).to.exist;",
+              "    pm.expect(jsonData.endpoints.search).to.exist;",
+              "    pm.expect(jsonData.endpoints.chunk).to.exist;",
+              "    pm.expect(jsonData.endpoints['map-topics']).to.exist;",
+              "    pm.expect(jsonData.endpoints.sitemap).to.exist;",
               "});"
             ],
             "type": "text/javascript"
@@ -691,7 +699,497 @@
       "response": []
     },
     {
-      "name": "Robots.txt",
+      "name": "Discover URLs",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has urls array with source\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.urls).to.be.an('array');",
+              "    pm.expect(jsonData.totalUrls).to.equal(jsonData.urls.length);",
+              "    if (jsonData.urls.length > 0) {",
+              "        pm.expect(jsonData.urls[0].url).to.exist;",
+              "        pm.expect(jsonData.urls[0].source).to.be.oneOf(['sitemap', 'robots', 'crawl']);",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"{{test_url_1}}\",\n  \"maxPages\": 10\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/discover",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "discover"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Extract Page",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has all metadata fields\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.url).to.exist;",
+              "    pm.expect(jsonData.title).to.exist;",
+              "    pm.expect(jsonData.metaTitle).to.exist;",
+              "    pm.expect(jsonData.h1).to.be.an('array');",
+              "    pm.expect(jsonData.headings).to.be.an('array');",
+              "    pm.expect(jsonData.markdown).to.exist;",
+              "    pm.expect(jsonData.linksInternal).to.be.an('array');",
+              "    pm.expect(jsonData.linksExternal).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"{{test_url_1}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/extract",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "extract"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Diff - Two URLs",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has success true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Response has stats and topics\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.stats).to.exist;",
+              "    pm.expect(jsonData.stats.similarityPercent).to.be.a('number');",
+              "    pm.expect(jsonData.differences).to.exist;",
+              "    pm.expect(jsonData.topics).to.exist;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url1\": \"{{test_url_1}}\",\n  \"url2\": \"{{test_url_2}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/diff",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "diff"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Pages",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has results\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.query).to.exist;",
+              "    pm.expect(jsonData.results).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"example\",\n  \"pages\": [\n    {\n      \"url\": \"https://example.com\",\n      \"markdown\": \"# Example Domain\\nThis domain is for use in illustrative examples in documents.\",\n      \"title\": \"Example\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/search",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "search"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chunk Markdown",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has chunks array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.chunks).to.be.an('array');",
+              "    pm.expect(jsonData.totalChunks).to.equal(jsonData.chunks.length);",
+              "    if (jsonData.chunks.length > 0) {",
+              "        pm.expect(jsonData.chunks[0].text).to.exist;",
+              "        pm.expect(jsonData.chunks[0].tokenEstimate).to.be.a('number');",
+              "        pm.expect(jsonData.chunks[0].headingPath).to.be.an('array');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"markdown\": \"# Chapter 1\\n\\nThis is the first chapter with a long text that should be split into multiple chunks for LLM processing.\\n\\n## Section 1.1\\n\\nMore detailed content here that continues the narrative.\\n\\n## Section 1.2\\n\\nAnother section with additional information and details.\\n\\n# Chapter 2\\n\\nStarting a new major section with completely different content.\\n\\n### Subsection 2.1\\n\\nDeep dive into a specific topic with lots of explanatory text.\\n\\n# Chapter 3\\n\\nFinal chapter with concluding remarks and summary.\",\n  \"maxTokens\": 50,\n  \"overlap\": 10\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/chunk",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "chunk"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Map Topics",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has clusters\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.clusters).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pages\": [\n    {\n      \"url\": \"https://example.com/page1\",\n      \"title\": \"Page 1 - Marketing\",\n      \"markdown\": \"# Marketing Strategy\\n\\nThis page covers our marketing strategy for social media and email campaigns. We focus on brand awareness and customer acquisition.\"\n    },\n    {\n      \"url\": \"https://example.com/page2\",\n      \"title\": \"Page 2 - Sales\",\n      \"markdown\": \"# Sales Process\\n\\nOur sales process involves lead generation, qualification, and closing. We use CRM tools to track customer interactions.\"\n    },\n    {\n      \"url\": \"https://example.com/page3\",\n      \"title\": \"Page 3 - Product\",\n      \"markdown\": \"# Product Features\\n\\nOur product includes many features for marketing automation, sales tracking, and customer relationship management.\"\n    }\n  ],\n  \"minWordFrequency\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/map-topics",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "map-topics"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Batch Single - Convert Multiple URLs",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has batch results\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.total).to.be.a('number');",
+              "    pm.expect(jsonData.results).to.be.an('array');",
+              "});",
+              "",
+              "pm.test(\"Each result has url and success flag\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    jsonData.results.forEach(function(r) {",
+              "        pm.expect(r.url).to.exist;",
+              "        pm.expect(r.success).to.be.a('boolean');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"urls\": [\n    \"{{test_url_1}}\",\n    \"{{test_url_2}}\"\n  ],\n  \"concurrency\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/convert/batch-single",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            "batch-single"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Sitemap Info",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has sitemap info\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.found).to.be.a('boolean');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/sitemap?url={{test_url_1}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "sitemap"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "{{test_url_1}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
       "event": [
         {
           "listen": "test",

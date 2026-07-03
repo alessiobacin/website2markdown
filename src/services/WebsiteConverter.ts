@@ -18,6 +18,12 @@ export interface ConversionResult {
   pages: PageContent[];
 }
 
+export interface DiscoveredUrl {
+  url: string;
+  source: 'sitemap' | 'robots' | 'crawl';
+  lastmod?: string;
+}
+
 export class WebsiteConverter {
   private turndownService: TurndownService;
   private sitemapParser: SitemapParser;
@@ -81,7 +87,75 @@ export class WebsiteConverter {
   }
 
   /**
-   * Scopre tutte le pagine di un sito web
+   * Scopre tutte le pagine di un sito web e restituisce URL con sorgente e metadata
+   */
+  async discoverUrls(url: string, maxPages: number = 100): Promise<{ domain: string; urls: DiscoveredUrl[] }> {
+    const domain = extractDomain(url);
+    const baseUrl = normalizeUrl(url);
+    const isUnlimited = maxPages === 0;
+    const result: DiscoveredUrl[] = [];
+    const seen = new Set<string>();
+
+    console.log(`🔍 Discovering pages for domain: ${domain}`);
+
+    // 1. Sitemap
+    try {
+      console.log('🗺️  Checking sitemap...');
+      const sitemapUrls = await this.sitemapParser.getSitemapUrls(baseUrl);
+      for (const entry of sitemapUrls) {
+        const u = typeof entry === 'string' ? entry : entry;
+        if (this.isValidPageUrl(u, domain) && !seen.has(u)) {
+          seen.add(u);
+          result.push({ url: u, source: 'sitemap' });
+        }
+      }
+      console.log(`Found from sitemap: ${sitemapUrls.length}`);
+    } catch {
+      console.log('No sitemap found');
+    }
+
+    // 2. Robots.txt
+    try {
+      console.log('🤖 Checking robots.txt...');
+      const robotsUrls = await this.robotsParser.getRobotsUrls(baseUrl);
+      for (const u of robotsUrls) {
+        if (this.isValidPageUrl(u, domain) && !seen.has(u)) {
+          seen.add(u);
+          result.push({ url: u, source: 'robots' });
+        }
+      }
+      console.log(`Found from robots.txt: ${robotsUrls.length}`);
+    } catch {
+      console.log('No robots.txt found');
+    }
+
+    // 3. Crawl homepage
+    try {
+      console.log('🕷️  Crawling homepage...');
+      const crawledUrls = await this.crawlPageForLinks(baseUrl, domain);
+      for (const u of crawledUrls) {
+        if (this.isValidPageUrl(u, domain) && !seen.has(u) && (isUnlimited || result.length < maxPages)) {
+          seen.add(u);
+          result.push({ url: u, source: 'crawl' });
+        }
+      }
+      console.log(`Found from crawl: ${crawledUrls.length}`);
+    } catch {
+      console.log('Error crawling homepage');
+    }
+
+    // 4. Se nessun URL trovato, almeno la homepage
+    if (result.length === 0) {
+      result.push({ url: baseUrl, source: 'crawl' });
+    }
+
+    const limited = isUnlimited ? result : result.slice(0, maxPages);
+    console.log(`Total discovered: ${limited.length}${isUnlimited ? ' (unlimited)' : ''}`);
+    return { domain, urls: limited };
+  }
+
+  /**
+   * Scopre tutte le pagine di un sito web (metodo interno, legacy)
    */
   private async discoverAllPages(baseUrl: string, maxPages: number): Promise<string[]> {
     const urls = new Set<string>();

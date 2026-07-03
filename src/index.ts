@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { websiteToMarkdownRouter } from './routes/websiteToMarkdown';
 import { robotsTxtRouter } from './routes/robotsTxt';
+import { newEndpointsRouter } from './routes/newEndpoints';
 import { authMiddleware } from './middleware/auth';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -25,6 +26,7 @@ app.use('/api', authMiddleware);
 
 // Routes
 app.use('/api/convert', websiteToMarkdownRouter);
+app.use('/api', newEndpointsRouter);
 app.use('/api/robots-txt', authMiddleware, robotsTxtRouter);
 
 // Health check endpoint
