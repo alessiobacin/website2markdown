@@ -1,12 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { WebsiteConverter } from '../services/WebsiteConverter';
 import { PageExtractor } from '../services/PageExtractor';
+import { ArticleListingExtractor } from '../services/ArticleListingExtractor';
 import { SitemapParser } from '../services/SitemapParser';
 import { validateUrl, extractDomain } from '../utils/validation';
 
 const router = Router();
 const converter = new WebsiteConverter();
 const extractor = new PageExtractor();
+const articleExtractor = new ArticleListingExtractor();
 const sitemapParser = new SitemapParser();
 
 // ──────────────────────────────────────────────
@@ -50,7 +52,7 @@ router.post('/discover', async (req: Request<{}, {}, { url: string; maxPages?: n
 });
 
 // ──────────────────────────────────────────────
-// 2. POST /api/extract
+// 2. POST /api/extract — Article listing extractor
 // ──────────────────────────────────────────────
 router.post('/extract', async (req: Request<{}, {}, { url: string }>, res: Response): Promise<void> => {
   try {
@@ -66,26 +68,15 @@ router.post('/extract', async (req: Request<{}, {}, { url: string }>, res: Respo
       return;
     }
 
-    const page = await extractor.extract(url);
+    const result = await articleExtractor.extract(url);
 
     res.json({
-      success: true,
-      url: page.url,
-      title: page.title,
-      metaTitle: page.metaTitle,
-      metaDescription: page.metaDescription,
-      h1: page.h1,
-      headings: page.headings,
-      canonical: page.canonical,
-      lang: page.lang,
-      markdown: page.markdown,
-      wordCount: page.wordCount,
-      linksInternal: page.linksInternal,
-      linksExternal: page.linksExternal,
-      linksInternalCount: page.linksInternal.length,
-      linksExternalCount: page.linksExternal.length,
-      publishedAt: page.publishedAt,
-      timestamp: new Date().toISOString(),
+      success: result.success,
+      title: result.title,
+      articleLinks: result.articleLinks,
+      linksInternal: result.linksInternal,
+      markdown: result.markdown,
+      timestamp: result.timestamp,
     });
   } catch (error) {
     console.error('Extraction error:', error);

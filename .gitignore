@@ -220,3 +220,7 @@ dist
 .Trashes
 ehthumbs.db
 Thumbs.db
+# Project memory
+memory/
+# SQLite database
+data/

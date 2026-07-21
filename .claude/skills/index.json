@@ -1,0 +1,179 @@
+{
+  "skills": [
+    {
+      "directory": "am-will__codex-skills__context7",
+      "kind": "mirror",
+      "upstream": "am-will/codex-skills@context7"
+    },
+    {
+      "directory": "am-will__codex-skills__tdd-test-writer",
+      "kind": "mirror",
+      "upstream": "am-will/codex-skills@tdd-test-writer"
+    },
+    {
+      "directory": "anthropics__skills__frontend-design",
+      "kind": "mirror",
+      "upstream": "anthropics/skills@frontend-design"
+    },
+    {
+      "directory": "anthropics__skills__mcp-builder",
+      "kind": "mirror",
+      "upstream": "anthropics/skills@mcp-builder"
+    },
+    {
+      "directory": "anthropics__skills__webapp-testing",
+      "kind": "mirror",
+      "upstream": "anthropics/skills@webapp-testing"
+    },
+    {
+      "directory": "claude-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "currents-dev__playwright-best-practices-skill__playwright-best-practices",
+      "kind": "mirror",
+      "upstream": "currents-dev/playwright-best-practices-skill@playwright-best-practices"
+    },
+    {
+      "directory": "docker-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "graphify",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "gh-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "github__awesome-copilot__conventional-commit",
+      "kind": "mirror",
+      "upstream": "github/awesome-copilot@conventional-commit"
+    },
+    {
+      "directory": "github__awesome-copilot__documentation-writer",
+      "kind": "mirror",
+      "upstream": "github/awesome-copilot@documentation-writer"
+    },
+    {
+      "directory": "github__awesome-copilot__git-commit",
+      "kind": "mirror",
+      "upstream": "github/awesome-copilot@git-commit"
+    },
+    {
+      "directory": "github__awesome-copilot__mcp-cli",
+      "kind": "mirror",
+      "upstream": "github/awesome-copilot@mcp-cli"
+    },
+    {
+      "directory": "josiahsiegel__claude-plugin-marketplace__docker-platform-guide",
+      "kind": "mirror",
+      "upstream": "josiahsiegel/claude-plugin-marketplace@docker-platform-guide"
+    },
+    {
+      "directory": "mattpocock__skills__tdd",
+      "kind": "mirror",
+      "upstream": "mattpocock/skills@tdd"
+    },
+    {
+      "directory": "nextlevelbuilder__ui-ux-pro-max-skill__ui-ux-pro-max",
+      "kind": "mirror",
+      "upstream": "nextlevelbuilder/ui-ux-pro-max-skill@ui-ux-pro-max"
+    },
+    {
+      "directory": "playwright-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "postman-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "postman-devrel__agent-skills__postman",
+      "kind": "mirror",
+      "upstream": "postman-devrel/agent-skills@postman"
+    },
+    {
+      "directory": "postman-devrel__agent-skills__postman-api-readiness",
+      "kind": "mirror",
+      "upstream": "postman-devrel/agent-skills@postman-api-readiness"
+    },
+    {
+      "directory": "sickn33__antigravity-awesome-skills__docker-expert",
+      "kind": "mirror",
+      "upstream": "sickn33/antigravity-awesome-skills@docker-expert"
+    },
+    {
+      "directory": "sickn33__antigravity-awesome-skills__nextjs-supabase-auth",
+      "kind": "mirror",
+      "upstream": "sickn33/antigravity-awesome-skills@nextjs-supabase-auth"
+    },
+    {
+      "directory": "supabase-cli",
+      "kind": "local",
+      "upstream": null
+    },
+    {
+      "directory": "supabase__agent-skills__supabase-postgres-best-practices",
+      "kind": "mirror",
+      "upstream": "supabase/agent-skills@supabase-postgres-best-practices"
+    },
+    {
+      "directory": "supercent-io__skills-template__api-documentation",
+      "kind": "mirror",
+      "upstream": "supercent-io/skills-template@api-documentation"
+    },
+    {
+      "directory": "supercent-io__skills-template__git-workflow",
+      "kind": "mirror",
+      "upstream": "supercent-io/skills-template@git-workflow"
+    },
+    {
+      "directory": "upstash__context7__documentation-lookup",
+      "kind": "mirror",
+      "upstream": "upstash/context7@documentation-lookup"
+    },
+    {
+      "directory": "vercel-labs__agent-skills__vercel-react-best-practices",
+      "kind": "mirror",
+      "upstream": "vercel-labs/agent-skills@vercel-react-best-practices"
+    },
+    {
+      "directory": "wshobson__agents__api-design-principles",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@api-design-principles"
+    },
+    {
+      "directory": "wshobson__agents__auth-implementation-patterns",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@auth-implementation-patterns"
+    },
+    {
+      "directory": "wshobson__agents__code-review-excellence",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@code-review-excellence"
+    },
+    {
+      "directory": "wshobson__agents__e2e-testing-patterns",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@e2e-testing-patterns"
+    },
+    {
+      "directory": "wshobson__agents__nodejs-backend-patterns",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@nodejs-backend-patterns"
+    },
+    {
+      "directory": "wshobson__agents__tailwind-design-system",
+      "kind": "mirror",
+      "upstream": "wshobson/agents@tailwind-design-system"
+    }
+  ]
+}

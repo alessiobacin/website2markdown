@@ -1,15 +1,30 @@
 {
-  "model": "llmProxy",
   "env": {
     "ANTHROPIC_BASE_URL": "http://127.0.0.1:7045",
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
-    "LLMPROXY_SHORT_ANSWER": "2",
-    "LLMPROXY_SMART_ROUTE": "hybrid",
-    "LLMPROXY_SMART_PREFERENCE": "balanced",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "LLMPROXY_LLM_STATS_API_KEY": "sk_ze_ya2l89h1RoR1Cm2PlM5V4r4oVg0rmB2QQXB7rt6C-Zw",
+    "LLMPROXY_SENDGRID_FROM_EMAIL": "llmproxy@otomatik.it",
+    "LLMPROXY_SENDGRID_TO_EMAIL": "alessio.bacin@gmail.com",
+    "LLMPROXY_SENDGRID_TO_MESSAGE_TYPE": "service_unreachable,service_recovered,provider_error,auto_escalation,provider_credit_exhausted,service_update",
     "LLMPROXY_INFERENCE_INFO_INLINE": "1",
+    "LLMPROXY_METERING_INLINE": "0",
     "LLMPROXY_PROVIDER_CREDIT_INLINE": "1",
-    "LLMPROXY_AUTO_ESCALATE": "1"
+    "LLMPROXY_SHORT_ANSWER": "2"
+  },
+  "model": "llmProxy",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -d memory ]; then cm recall-auto; fi"
+          }
+        ]
+      }
+    ]
   }
 }
